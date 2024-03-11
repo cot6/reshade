@@ -281,6 +281,10 @@ reshade::runtime::runtime(api::swapchain *swapchain, api::command_queue *graphic
 	load_config();
 
 	fpng::fpng_init();
+
+#if RESHADE_GUI
+	_force_show_overlay = _tutorial_index == 0;
+#endif
 }
 reshade::runtime::~runtime()
 {

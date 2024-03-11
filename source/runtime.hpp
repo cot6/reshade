@@ -434,7 +434,7 @@ namespace reshade
 		ImGuiContext *_imgui_context = nullptr;
 
 		bool _show_splash = true;
-		bool _show_overlay = false;
+		bool _show_overlay = false, _force_show_overlay = false;
 		unsigned int _show_fps = 2;
 		unsigned int _show_clock = false;
 		unsigned int _show_frametime = false;
@@ -442,6 +442,8 @@ namespace reshade
 #if RESHADE_FX
 		bool _show_preset_transition_message = true;
 		unsigned int _reload_count = 0;
+
+		void *_splash_window = nullptr;
 #endif
 
 		bool _is_font_scaling = false;

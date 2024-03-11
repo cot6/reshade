@@ -809,9 +809,6 @@ void reshade::runtime::draw_gui()
 		}
 	}
 
-	if (show_overlay != _show_overlay)
-		open_overlay(show_overlay, show_overlay_source);
-
 #if RESHADE_FX
 	const bool show_splash_window = _show_splash && (is_loading() || (_reload_count <= 1 && (_last_present_time - _last_reload_time) < std::chrono::seconds(5)) || (!_show_overlay && _tutorial_index == 0 && _input != nullptr));
 #else
@@ -831,6 +828,17 @@ void reshade::runtime::draw_gui()
 	const bool show_fps = _show_fps == 1 || (_show_overlay && _show_fps > 1);
 	const bool show_frametime = _show_frametime == 1 || (_show_overlay && _show_frametime > 1);
 	bool show_statistics_window = show_clock || show_fps || show_frametime;
+
+	if (!show_overlay && _force_show_overlay && _splash_window)
+	{
+		_force_show_overlay = false;
+		show_overlay = true;
+		show_overlay_source = api::input_source::_runtime_class;
+	}
+
+	if (show_overlay != _show_overlay)
+		open_overlay(show_overlay, show_overlay_source);
+
 #if RESHADE_ADDON
 	for (const addon_info &info : addon_loaded_info)
 	{
@@ -1062,6 +1070,7 @@ void reshade::runtime::draw_gui()
 #endif
 
 	ImVec2 viewport_offset = ImVec2(0, 0);
+	_splash_window = nullptr;
 
 	// Create ImGui widgets and windows
 	if (show_splash_window)
@@ -1079,6 +1088,8 @@ void reshade::runtime::draw_gui()
 			ImGuiWindowFlags_NoSavedSettings |
 			ImGuiWindowFlags_NoDocking |
 			ImGuiWindowFlags_NoFocusOnAppearing);
+
+		_splash_window = ImGui::GetCurrentWindow();
 
 		ImGui::TextUnformatted("ReShade " VERSION_STRING_PRODUCT);
 
