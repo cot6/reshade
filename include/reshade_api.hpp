@@ -806,5 +806,10 @@ namespace reshade { namespace api
 		/// </summary>
 		/// <param name="effect_name">File name of the effect file that should be reloaded.</param>
 		virtual void reload_effect_next_frame(const char *effect_name) = 0;
+
+		/// <summary>
+		/// *TODO*
+		/// </summary>
+		virtual void set_annotation_string_to_uniform_variable_indirect(effect_uniform_variable variable, const char *name, const char *value) = 0;
 	};
 } }

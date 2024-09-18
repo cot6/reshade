@@ -1562,3 +1562,20 @@ void reshade::runtime::reload_effect_next_frame([[maybe_unused]] const char *eff
 	}
 #endif
 }
+
+void reshade::runtime::set_annotation_string_to_uniform_variable_indirect(api::effect_uniform_variable handle, const char *name, const char *value)
+{
+#if RESHADE_FX
+	if (auto variable = reinterpret_cast<uniform *>(handle.handle); variable != nullptr)
+	{
+		if (auto ann_it = std::find_if(variable->annotations.begin(), variable->annotations.end(),
+			[ann_name = std::string_view(name)](reshadefx::annotation &annotation) { return annotation.name == ann_name; }); ann_it != variable->annotations.end())
+		{
+			if (reshadefx::constant &current = ann_it->value; value == nullptr || *value == '\0')
+				current.string_data.clear();
+			else
+				current.string_data = value;
+		}
+	}
+#endif
+}

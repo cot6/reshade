@@ -170,6 +170,8 @@ namespace reshade
 
 		void reload_effect_next_frame(const char *effect_name) final;
 
+		void set_annotation_string_to_uniform_variable_indirect(api::effect_uniform_variable variable, const char *name, const char *value) final;
+
 	private:
 		static void check_for_update();
 
