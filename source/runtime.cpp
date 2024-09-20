@@ -1862,7 +1862,7 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 		}
 	}
 
-	if ( effect.compiled && (effect.preprocessed || source_cached))
+	if ( effect.compiled && (effect.preprocessed || source_cached) && source_file.extension() != L".nocompilefx")
 	{
 		if (effect.assembly.empty())
 		{
@@ -2185,7 +2185,13 @@ bool reshade::runtime::load_effect(const std::filesystem::path &source_file, con
 	else
 		_reload_remaining_effects = 0; // Force effect initialization in 'update_effects'
 
-	if ( effect.compiled && (effect.preprocessed || source_cached))
+	const bool load_effect_result = effect.compiled && (effect.preprocessed || source_cached);
+
+	// The .nocompilefx only holds ReShade FX results. So do not handle the ReShade side variables if 'compiled' is false
+	if (source_file.extension() == L".nocompilefx")
+		effect.compiled = false;
+
+	if (load_effect_result)
 	{
 		if (effect.errors.empty())
 			log::message(log::level::info, "Successfully compiled '%s' in %f s.", source_file.u8string().c_str(), std::chrono::duration_cast<std::chrono::milliseconds>(time_load_finished - time_load_started).count() * 1e-3f);
@@ -3363,7 +3369,7 @@ void reshade::runtime::load_effects(bool force_load_all)
 {
 	// Build a list of effect files by walking through the effect search paths
 	const std::vector<std::filesystem::path> effect_files =
-		find_files(_effect_search_paths, { L".fx", L".addonfx" });
+		find_files(_effect_search_paths, { L".fx", L".addonfx", L".nocompilefx" });
 
 	if (effect_files.empty())
 		return; // No effect files found, so nothing more to do
